@@ -4,3 +4,6 @@
 
 layout: home
 ---
+
+hello hello
+<script src="{{ base.url | prepend: site.url }}/assets/hey.js"></script>
