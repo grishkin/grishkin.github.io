@@ -47,7 +47,6 @@
 
     <script>
       const canvas = document.getElementById("canvas");
-      // canvas.style = "width: 200px; height: 200px;"
       const ctx = canvas.getContext("2d");
 
       const drawCircle = (ctx, x, y, radius, value, isHighlighted) => {
@@ -58,14 +57,8 @@
         ctx.textBaseline = "middle";
         ctx.fillText(value, x, y)
         ctx.lineWidth = 1
-        // if (isHighlighted) {
-        //   ctx.strokeStyle = "red";
-        //   ctx.stroke()
-        // }else  {
-          ctx.strokeStyle = 'black'
-          ctx.stroke()
-        // }
-
+        ctx.strokeStyle = 'black'
+        ctx.stroke()
       }
 
       const exampleNodes = [1, 3, 5, 4, 6, 13, 10, 9, 8, 15, 17];
@@ -88,7 +81,6 @@
           ctx.moveTo(0, 0);
         }
 
-
         drawCircle(ctx, xPos, yPos, radius, nodes[i], nodes[i] === targetVal);
 
         if (leftIndex < nodes.length) {
@@ -98,8 +90,6 @@
           drawNode(nodes, rightIndex, 1, depth + 1, xPos, targetVal);
         }
       }
-
-
 
       drawNode(exampleNodes, 0, 0, 1, 300 - 15);
 
@@ -114,32 +104,6 @@
         } else {
           return (i - 1) / 2
         }
-      }
-
-      function* heap(nodes) {
-        const result = [...nodes];
-        for (let i = 0; i < result.length; i += 1) {
-          const parentIndex = getParent(i);
-          const newResult = swap(result, i, parentIndex);
-          // console.log('new', newResult)
-          yield [newResult, result[i]];
-        }
-      }
-
-      const iterator = heap(nodes);
-
-      rightButton.onclick = () => {
-        const next = iterator.next();
-        console.log(next)
-
-        if (!next.value) {
-          return;
-        }
-
-        const [arr, targetVal] = next.value;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);  
-        drawNode(arr, 0, 0, 1, 300 - 15, targetVal);
       }
 
       function swap(nodes, index, parentIndex) {
@@ -157,6 +121,28 @@
         return nodes;
       }
 
+      function* heap(nodes) {
+        const result = [...nodes];
+        for (let i = 0; i < result.length; i += 1) {
+          const parentIndex = getParent(i);
+          const newResult = swap(result, i, parentIndex);
+          yield [newResult, result[i]];
+        }
+      }
+
+      const iterator = heap(nodes);
+
+      rightButton.onclick = () => {
+        const next = iterator.next();
+        if (!next.value) {
+          return;
+        }
+
+        const [arr, targetVal] = next.value;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawNode(arr, 0, 0, 1, 300 - 15, targetVal);
+      }
     </script>
     <div style="height: 200px;"></div>
   </div>
