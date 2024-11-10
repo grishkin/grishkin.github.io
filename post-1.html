@@ -36,6 +36,14 @@
       swap it upwards until it is smaller than its parent
     </p>
 
+    <p>
+      One class of problem is finding the top k elements of some collection of elements. We can solve this by
+      building a heap, taking the first element from that heap, then re-creating that heap etc.
+      this would mean the complexity for k elements is n for creation of the heap and k * log(n) for getting the result.
+      As once we remove the top element we have to recreate the heap. We can do this in log(n) time by taking the children of
+      the root node, getting the smaller one, and traversing down the tree until it is less than the current node, then attaching it. Whatever we replace would then have to be bubbled down further.
+    </p>
+
     <div>
       <canvas id="canvas" width="600px" height="400px"></canvas>
     </div>
