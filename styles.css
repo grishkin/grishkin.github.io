@@ -1,0 +1,8 @@
+.pageContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.pageContent {
+    max-width: 600px;
+}
