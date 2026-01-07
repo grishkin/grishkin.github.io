@@ -1,0 +1,174 @@
+<html>
+<style>
+  .dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: black;
+  }
+</style>
+<div style="display: flex; justify-content: center;">
+  <div style="max-width: 600px;">
+    <h2>Building a heap from scratch</h2>
+    <p>
+      A heap is a data structure that can be represented as an array
+      the ordering of elements in the array represent the structure of the heap
+      let's take an example [100, 19, 36, 17, 3, 25, 1, 2, 7]
+    </p>
+    <p>
+      Given a node at index i, its children are at indices 2i + 1 and 2i + 2
+      we can see this in the example, 100 is at index 0 and its children are at
+      1 and 2.
+    </p>
+    <p>
+      36 is at index 2, and its children are at 5 and 6.
+    </p>
+    <p>
+      How can we verify that this is a heap? and how do we ensure this remains a heap as we add
+      and remove elements?
+    </p>
+    <div style="display: flex; justify-content: center;">
+      <img src="/assets/heap-BC1c9WsF.svg" style="max-width: 300px;" />
+    </div>
+    <p>
+      We can effectively bubble up values that don't satisfy the heap property
+      simply put, for each value in the array/heap, if the child is greater than the parent, then
+      swap it upwards until it is smaller than its parent
+    </p>
+
+    <p>
+      One class of problem is finding the top k elements of some collection of elements. We can solve this by
+      building a heap, taking the first element from that heap, then re-creating that heap etc.
+      this would mean the complexity for k elements is n for creation of the heap and k * log(n) for getting the result.
+      As once we remove the top element we have to recreate the heap. We can do this in log(n) time by taking the children of
+      the root node, getting the smaller one, and traversing down the tree until it is less than the current node, then attaching it. Whatever we replace would then have to be bubbled down further.
+    </p>
+
+    <div>
+      <canvas id="canvas" width="600px" height="400px"></canvas>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center;">
+      <button id="left">&larr;</button>
+      <div style="width: 20px;"></div>
+      <button id="right">&rarr;</button>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const drawCircle = (ctx, x, y, radius, value, isHighlighted) => {
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
+        ctx.font = "15px serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(value, x, y)
+        ctx.lineWidth = 1
+        ctx.strokeStyle = 'black'
+        ctx.stroke()
+      }
+
+      const exampleNodes = [1, 3, 5, 4, 6, 13, 10, 9, 8, 15, 17];
+
+      const drawNode = (nodes, i, pos, depth, parentX, targetVal) => {
+        const sideMovement = 80 * Math.pow(0.6, depth * 1.5) + (1 / depth) * 150
+        const xPos = parentX + (pos * sideMovement);
+
+        const yPos = depth * 80;
+        const radius = 15;
+
+        const leftIndex = 2 * i + 1;
+        const rightIndex = 2 * i + 2;
+
+        if (depth !== 1) {
+          ctx.beginPath()
+          ctx.moveTo(parentX, (depth - 1) * 80 + 15);
+          ctx.lineTo(xPos, yPos - 15)
+          ctx.stroke();
+          ctx.moveTo(0, 0);
+        }
+
+        drawCircle(ctx, xPos, yPos, radius, nodes[i], nodes[i] === targetVal);
+
+        if (leftIndex < nodes.length) {
+          drawNode(nodes, leftIndex, - 1, depth + 1, xPos, targetVal);
+        }
+        if (rightIndex < nodes.length) {
+          drawNode(nodes, rightIndex, 1, depth + 1, xPos, targetVal);
+        }
+      }
+
+      drawNode(exampleNodes, 0, 0, 1, 300 - 15);
+
+      const leftButton = document.getElementById('left');
+      const rightButton = document.getElementById('right');
+
+      let nodes = [...exampleNodes]
+
+      function getParent(i) {
+        if (i % 2 === 0) {
+          return (i - 2) / 2
+        } else {
+          return (i - 1) / 2
+        }
+      }
+
+      function swap(nodes, index, parentIndex) {
+        if (parentIndex < 0 || index < 0) {
+          return nodes;
+        }
+
+        if (nodes[index] > nodes[parentIndex]) {
+          const temp = nodes[index];
+          nodes[index] = nodes[parentIndex]
+          nodes[parentIndex] = temp;
+
+          swap(nodes, parentIndex, getParent(parentIndex));
+        }
+        return nodes;
+      }
+
+      function* heap(nodes) {
+        const result = [...nodes];
+        for (let i = 0; i < result.length; i += 1) {
+          const parentIndex = getParent(i);
+          const newResult = swap(result, i, parentIndex);
+          yield [newResult, result[i]];
+        }
+      }
+
+      const iterator = heap(nodes);
+
+      rightButton.onclick = () => {
+        const next = iterator.next();
+        if (!next.value) {
+          return;
+        }
+
+        const [arr, targetVal] = next.value;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawNode(arr, 0, 0, 1, 300 - 15, targetVal);
+      }
+    </script>
+    <div style="height: 200px;"></div>
+  </div>
+
+  <!-- <script>
+    const fig1 = document.getElementById("fig1")
+    const nodes = [1, 3, 5, 4, 6, 13, 10, 9, 8, 15, 17];
+
+    for (node of nodes) {
+      const newEl = document.createElement('div')
+      newEl.className = "dot"
+      fig1.appendChild(newEl);
+    }
+  </script> -->
+
+
+
+</div>
+</div>
+
+</html>
