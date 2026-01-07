@@ -1,4 +1,51 @@
 node_modules
 .DS_Store
 .env
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
+# Virtual Environments (Covers common names)
+venv/
+env/
+.env/
+.venv/
+bin/
+
+# Distribution / Packaging
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Unit Test / Coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.pytest_cache/
+
+# Jupyter Notebook (if you use them)
+.ipynb_checkpoints
+
+# Environment Variables (Keep secrets safe!)
+.env
+
+# OS specific (Mac/Windows junk)
+.DS_Store
+Thumbs.db
