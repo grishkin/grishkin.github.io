@@ -1,6 +1,3 @@
-import { captureRejectionSymbol } from 'node:events';
-
-
 export class TrieNode {
   constructor(value: string) {
     this.value = value
@@ -75,6 +72,9 @@ export class TrieBuilder {
     const word: string[] = [...input];
     word.shift();
 
+    // this is a real path in the trie (as opposed to the users input)
+    let prefix = input[0];
+
     let currNode = firstNode;
     while (word.length) {
       const nextLetter = word.shift()
@@ -85,17 +85,17 @@ export class TrieBuilder {
         break;
       }
 
+      prefix += nextLetter;
+
       currNode = nextChild
     }
 
 
     // now we have the last node letter, we want to traverse the tree to form a
     // few real suggestions
-    console.log(currNode)
     const results: string[] = [];
     this.formSuggestions(results, currNode, '');
-    console.log(results)
-    return results
+    return results.map(r => prefix + r)
   }
 
   formSuggestions(results: string[], node: TrieNode, currWord: string) {

@@ -1,6 +1,4 @@
 import './style.css'
-// TODO consider lazy loading later
-// import data from './dict.json'
 import { TrieBuilder } from './trie-builder';
 
 const input: HTMLInputElement | null = document.querySelector('#autocomplete-input');
@@ -22,9 +20,11 @@ input?.addEventListener('input', (e) => {
 
   const value = input.value.toLowerCase();
   const suggestions = trieBuilder.getSuggestions(value) || []
-  console.log(suggestions)
 
-  const listToShow = suggestions.map(s => input.value + s)
+  if (!suggestions.length) {
+    list.style.display = 'none';
+    return;
+  }
 
   // const filteredList = trieBuilder.movieTitles.filter(d => d.includes(value))
   list.style.display = 'block';
@@ -33,9 +33,9 @@ input?.addEventListener('input', (e) => {
     list.removeChild(list.firstChild);
   }
 
-  for (const e of listToShow) {
+  for (const s of suggestions) {
     const node = document.createElement('li');
-    node.innerText = e;
+    node.innerText = s;
     list.appendChild(node)
   }
 });
