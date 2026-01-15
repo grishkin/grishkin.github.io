@@ -26,7 +26,6 @@ input?.addEventListener('input', (e) => {
     return;
   }
 
-  // const filteredList = trieBuilder.movieTitles.filter(d => d.includes(value))
   list.style.display = 'block';
 
   while (list.firstChild) {

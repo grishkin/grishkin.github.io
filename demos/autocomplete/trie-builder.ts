@@ -86,7 +86,6 @@ export class TrieBuilder {
       }
 
       prefix += nextLetter;
-
       currNode = nextChild
     }
 
