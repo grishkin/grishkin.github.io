@@ -4,8 +4,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm run posts && vite --force",
+    "build": "npm run posts && vite build",
+    "posts": "node scripts/build-posts.js",
     "preview": "vite preview"
   },
   "keywords": [],
@@ -16,6 +17,8 @@
     "@types/node": "^25.0.5",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "front-matter": "^4.0.2",
+    "marked": "^17.0.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.0"
   },
