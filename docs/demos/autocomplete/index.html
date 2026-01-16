@@ -4,17 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Autocomplete Demo</title>
-    <script type="module" crossorigin src="/assets/autocomplete-DSw4ZN0F.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/assets/autocomplete-CT6hydbL.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
-    <link rel="stylesheet" crossorigin href="/assets/autocomplete-CMdbTThs.css">
+    <link rel="stylesheet" crossorigin href="/assets/autocomplete-D6aW6GEe.css">
   </head>
   <body>
     <div id="app">
-      <h1>Autocomplete Demo</h1>
-      <p>Start typing below...</p>
-      <input type="text" id="autocomplete-input" placeholder="Type something..." />
-      <ul id="suggestions-list"></ul>
+      <div class="header">
+        <h1>Autocomplete Demo</h1>
+        <a href="/" class="back-link">← Back to home</a>
+      </div>
+      <div class="main-container">
+        <div class="autocomplete-panel">
+          <p>Start typing below...</p>
+          <input type="text" id="autocomplete-input" placeholder="Type something..." />
+          <ul id="suggestions-list"></ul>
+        </div>
+        <div id="trie-viz">
+          <h3>Trie Visualization</h3>
+          <svg id="trie-svg"></svg>
+        </div>
+      </div>
     </div>
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_TOKEN_HERE"}'></script>
   </body>
 </html>
 

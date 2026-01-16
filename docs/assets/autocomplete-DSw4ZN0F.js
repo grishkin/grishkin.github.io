@@ -1,1 +1,0 @@
-import"./modulepreload-polyfill-B5Qt9EMX.js";const o=document.querySelector("#autocomplete-input");document.querySelector("#suggestions-list");o.addEventListener("input",t=>{const e=t.target.value;console.log("Input:",e)});
