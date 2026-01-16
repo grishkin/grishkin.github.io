@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' https://static.cloudflareinsights.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com;
+        connect-src 'self' https://cloudflareinsights.com;
+        img-src 'self' data:;
+    ">
+    <title>Building a Trie for Autocomplete – Greg Chernyshov</title>
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Source Serif Pro', Georgia, serif;
+            background-color: #fdf6e3;
+            color: #333;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Header */
+        .back-link {
+            display: inline-block;
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Article Header */
+        .article-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e8e0d0;
+        }
+
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #222;
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+        }
+
+        .article-meta {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* Article Content */
+        .article-content h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #222;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #222;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .article-content p {
+            margin-bottom: 1.25rem;
+        }
+
+        .article-content a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .article-content a:hover {
+            text-decoration: underline;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-bottom: 1.25rem;
+            padding-left: 1.5rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-content blockquote {
+            border-left: 3px solid #e07b53;
+            padding-left: 1.25rem;
+            margin: 1.5rem 0;
+            color: #555;
+            font-style: italic;
+        }
+
+        .article-content code {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.9em;
+            background: #f5f0e6;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+        }
+
+        .article-content pre {
+            background: #f5f0e6;
+            padding: 1.25rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+
+        .article-content hr {
+            border: none;
+            border-top: 1px solid #e8e0d0;
+            margin: 2.5rem 0;
+        }
+
+        /* Footer */
+        .article-footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e8e0d0;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to home</a>
+
+        <article>
+            <header class="article-header">
+                <h1>Building a Trie for Autocomplete</h1>
+                <div class="article-meta">January 2026</div>
+            </header>
+
+            <div class="article-content">
+                <p>
+                    Autocomplete is one of those features we use every day without thinking about it. 
+                    Whether it's Google search, your IDE, or a messaging app, autocomplete makes 
+                    typing faster and reduces errors. But how does it actually work?
+                </p>
+
+                <p>
+                    In this post, I'll walk through building an autocomplete system using a 
+                    <strong>trie</strong> (also called a prefix tree) — a data structure that's 
+                    particularly well-suited for this task.
+                </p>
+
+                <h2>What is a Trie?</h2>
+
+                <p>
+                    A trie is a tree-like data structure where each node represents a character. 
+                    The path from the root to any node spells out a prefix of the words stored 
+                    in the trie. This makes it extremely efficient for prefix-based searches.
+                </p>
+
+                <blockquote>
+                    The name "trie" comes from the word "retrieval" — though it's usually 
+                    pronounced "try" to distinguish it from "tree."
+                </blockquote>
+
+                <h2>The Basic Structure</h2>
+
+                <p>
+                    Each node in our trie needs two things:
+                </p>
+
+                <ul>
+                    <li>A value (the character it represents)</li>
+                    <li>A list of children (the possible next characters)</li>
+                </ul>
+
+                <p>Here's a simple TypeScript implementation:</p>
+
+                <pre><code>class TrieNode {
+  value: string;
+  children: TrieNode[] = [];
+
+  constructor(value: string) {
+    this.value = value;
+  }
+}</code></pre>
+
+                <h2>Inserting Words</h2>
+
+                <p>
+                    To insert a word, we traverse the trie character by character. If a node 
+                    for the next character doesn't exist, we create it. This way, words that 
+                    share prefixes share the same path in the trie.
+                </p>
+
+                <pre><code>function insert(root: TrieNode, word: string) {
+  let current = root;
+  
+  for (const char of word) {
+    let child = current.children.find(c => c.value === char);
+    
+    if (!child) {
+      child = new TrieNode(char);
+      current.children.push(child);
+    }
+    
+    current = child;
+  }
+}</code></pre>
+
+                <h2>Finding Suggestions</h2>
+
+                <p>
+                    To find autocomplete suggestions, we first navigate to the node 
+                    representing the user's input. Then we collect all possible completions 
+                    by traversing the subtree below that node.
+                </p>
+
+                <h3>Performance</h3>
+
+                <p>
+                    The beauty of a trie is its efficiency. Looking up a prefix takes 
+                    O(m) time, where m is the length of the prefix — regardless of how 
+                    many words are stored. This makes it perfect for real-time autocomplete 
+                    where we need instant responses as the user types.
+                </p>
+
+                <hr>
+
+                <p>
+                    Want to see this in action? Check out the 
+                    <a href="/demos/autocomplete/index.html">live demo</a> where you can 
+                    type queries and watch the trie visualization update in real-time.
+                </p>
+            </div>
+
+            <footer class="article-footer">
+                Thanks for reading! Feel free to reach out if you have questions.
+            </footer>
+        </article>
+    </div>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_TOKEN_HERE"}'></script>
+</body>
+</html>
