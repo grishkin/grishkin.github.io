@@ -2,6 +2,8 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import fs from 'fs'
 import path from 'path'
+import wasm from 'vite-plugin-wasm'
+import topLevelAwait from 'vite-plugin-top-level-await'
 
 // Helper to find all index.html files in demos directory
 function getDemoEntryPoints() {
@@ -24,6 +26,10 @@ function getDemoEntryPoints() {
 }
 
 export default defineConfig({
+  plugins: [
+    wasm(),
+    topLevelAwait()
+  ],
   build: {
     outDir: 'docs',
     rollupOptions: {

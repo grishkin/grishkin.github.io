@@ -1,6 +1,10 @@
 node_modules
 .DS_Store
 .env
+
+# Wasm build output
+demos/boid/rust/pkg/
+demos/boid/rust/target/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
